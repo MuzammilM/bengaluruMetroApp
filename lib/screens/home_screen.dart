@@ -42,7 +42,7 @@ class HomeScreen extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 20),
-                      
+
                       // From Station
                       StationSelector(
                         label: 'From',
@@ -51,9 +51,9 @@ class HomeScreen extends StatelessWidget {
                         icon: Icons.radio_button_checked,
                         iconColor: Colors.green,
                       ),
-                      
+
                       const SizedBox(height: 16),
-                      
+
                       // Swap button
                       Center(
                         child: IconButton(
@@ -63,9 +63,9 @@ class HomeScreen extends StatelessWidget {
                           color: Colors.blue,
                         ),
                       ),
-                      
+
                       const SizedBox(height: 16),
-                      
+
                       // To Station
                       StationSelector(
                         label: 'To',
@@ -74,14 +74,14 @@ class HomeScreen extends StatelessWidget {
                         icon: Icons.location_on,
                         iconColor: Colors.red,
                       ),
-                      
+
                       const SizedBox(height: 24),
-                      
+
                       // Find Route button
                       ElevatedButton(
-                        onPressed: provider.fromStation != null && 
-                                  provider.toStation != null && 
-                                  !provider.isLoading
+                        onPressed: provider.fromStation != null &&
+                                provider.toStation != null &&
+                                !provider.isLoading
                             ? provider.findRoute
                             : null,
                         style: ElevatedButton.styleFrom(
@@ -90,12 +90,14 @@ class HomeScreen extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(vertical: 16),
                         ),
                         child: provider.isLoading
-                            ? const CircularProgressIndicator(color: Colors.white)
-                            : const Text('Find Route', style: TextStyle(fontSize: 16)),
+                            ? const CircularProgressIndicator(
+                                color: Colors.white)
+                            : const Text('Find Route',
+                                style: TextStyle(fontSize: 16)),
                       ),
-                      
+
                       const SizedBox(height: 24),
-                      
+
                       // Route display
                       if (provider.currentRoute != null)
                         Expanded(
@@ -105,7 +107,7 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              
+
               // Right panel - Map
               Expanded(
                 flex: 2,

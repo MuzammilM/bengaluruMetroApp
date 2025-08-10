@@ -2,7 +2,7 @@
   "github": {
     "silent": true
   },
-  "buildCommand": "flutter build web --release",
+  "buildCommand": "chmod +x scripts/build.sh && ./scripts/build.sh",
   "outputDirectory": "build/web",
   "installCommand": "if [ ! -d \"/vercel/.flutter\" ]; then git clone https://github.com/flutter/flutter.git /vercel/.flutter; fi && /vercel/.flutter/bin/flutter doctor && /vercel/.flutter/bin/flutter pub get",
   "framework": null,

@@ -26,22 +26,33 @@ A Flutter web application for planning journeys on the Bangalore Metro system. T
    flutter pub get
    ```
 
-3. Get a Google Maps API key:
-   - Go to [Google Cloud Console](https://console.cloud.google.com/)
+3. Set up environment variables:
+   - Copy `.env.example` to `.env`
+   - Get a Google Maps API key from [Google Cloud Console](https://console.cloud.google.com/)
    - Enable Maps JavaScript API
-   - Create an API key
-   - Replace `YOUR_GOOGLE_MAPS_API_KEY` in `web/index.html`
+   - Add your API key to `.env`:
+     ```
+     GOOGLE_MAPS_API_KEY=your_actual_api_key_here
+     ```
 
 4. Run the app:
    ```bash
-   flutter run -d chrome
+   # For development
+   flutter run -d chrome --dart-define=GOOGLE_MAPS_API_KEY=$(grep GOOGLE_MAPS_API_KEY .env | cut -d '=' -f2)
+   
+   # Or use the build script
+   ./scripts/build.sh
    ```
 
 ## Deployment to Vercel
 
 1. Connect your GitHub repository to Vercel
-2. Vercel will automatically detect the Flutter project
-3. The app will be built and deployed using the configuration in `vercel.json`
+2. Add environment variable in Vercel dashboard:
+   - Go to Project Settings → Environment Variables
+   - Add `GOOGLE_MAPS_API_KEY` with your API key
+   - Make sure it's available for all environments (Production, Preview, Development)
+3. Vercel will automatically build and deploy using the configuration in `vercel.json`
+4. The build script will inject the API key during deployment
 
 ## Project Structure
 

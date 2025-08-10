@@ -52,6 +52,7 @@ app.*.map.json
 .env
 .env.local
 .env.production
+.env.development
 
 # IDE
 .vscode/

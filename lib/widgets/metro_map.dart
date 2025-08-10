@@ -12,7 +12,6 @@ class MetroMap extends StatefulWidget {
 }
 
 class _MetroMapState extends State<MetroMap> {
-  GoogleMapController? _controller;
   Set<Marker> _markers = {};
   Set<Polyline> _polylines = {};
 
@@ -74,7 +73,7 @@ class _MetroMapState extends State<MetroMap> {
             markers: _markers,
             polylines: _polylines,
             onMapCreated: (GoogleMapController controller) {
-              _controller = controller;
+              // Map controller ready
             },
             mapType: MapType.normal,
             zoomControlsEnabled: true,

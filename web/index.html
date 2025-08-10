@@ -12,19 +12,21 @@
   <link rel="icon" type="image/png" href="favicon.png"/>
   <title>Bangalore Metro Journey Planner</title>
   <link rel="manifest" href="manifest.json">
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAx3VdQOw8HLp9wwx2I98FEAhxYDNmj8AM&libraries=geometry"></script>
   <script>
-    window.googleMapsApiKey = '{{GOOGLE_MAPS_API_KEY}}';
+    // The value below is injected by flutter build, do not touch.
+    var serviceWorkerVersion = '{{flutter_service_worker_version}}';
   </script>
-  <script src="https://maps.googleapis.com/maps/api/js?key={{GOOGLE_MAPS_API_KEY}}&libraries=geometry"></script>
+  <!-- This script adds the flutter initialization JS inline -->
+  <script src="flutter.js" defer></script>
 </head>
 <body>
   <script>
+    {{flutter_js}}
+    {{flutter_build_config}}
+    
     window.addEventListener('load', function(ev) {
-      _flutter.loader.load({
-        serviceWorkerSettings: {
-          serviceWorkerVersion: serviceWorkerVersion,
-        },
-      });
+      _flutter.loader.load();
     });
   </script>
 </body>

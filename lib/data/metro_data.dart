@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import '../models/metro_station.dart';
 
 class MetroData {
-  static const List<MetroLine> lines = [
+  static final List<MetroLine> lines = [
     MetroLine(
       id: 'green',
       name: 'Green Line',
       color: Colors.green,
       isOperational: true,
-      stations: [
+      stations: const [
         'madivara', 'chikkabanavara', 'manjunathanagar', 'nagasandra',
         'dasarahalli', 'jalahalli', 'peenya_industry', 'peenya',
         'goraguntepalya', 'yeshwantpur', 'sandal_soap_factory',
@@ -25,7 +25,7 @@ class MetroData {
       name: 'Purple Line',
       color: Colors.purple,
       isOperational: true,
-      stations: [
+      stations: const [
         'challaghatta', 'kengeri', 'kengeri_bus_terminal', 'pattanagere',
         'jnanabharathi', 'rajarajeshwari_nagar', 'nayandahalli',
         'mysore_road', 'deepanjali_nagar', 'attiguppe', 'vijayanagar',
@@ -41,7 +41,7 @@ class MetroData {
       name: 'Yellow Line',
       color: Colors.yellow,
       isOperational: true,
-      stations: [
+      stations: const [
         'rashtreeya_vidyalaya_road', 'jayadeva_hospital', 'btm_layout',
         'silk_board', 'central_silk_board', 'hsr_layout', 'agara_lake',
         'bommanahalli', 'hongasandra', 'kudlu_gate', 'singasandra',

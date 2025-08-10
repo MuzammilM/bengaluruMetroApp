@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import '../providers/metro_provider.dart';
 import '../widgets/station_selector.dart';
 import '../widgets/route_display.dart';
-import '../widgets/metro_map.dart';
+import '../widgets/metro_map_simple.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -111,7 +111,7 @@ class HomeScreen extends StatelessWidget {
               // Right panel - Map
               Expanded(
                 flex: 2,
-                child: const MetroMap(),
+                child: const MetroMapSimple(),
               ),
             ],
           );

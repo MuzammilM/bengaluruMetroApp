@@ -28,7 +28,7 @@ class MetroLine {
   final List<String> stations;
   final bool isOperational;
 
-  const MetroLine({
+  MetroLine({
     required this.id,
     required this.name,
     required this.color,

@@ -72,12 +72,11 @@ class _MetroMapState extends State<MetroMap> {
         lineInfo = '${line.name}';
       }
       
-      // Create custom marker with smaller size
+      // Create custom marker
       final customIcon = await CustomMarkerHelper.createStationMarker(
         station,
         isFromStation: isFromStation,
         isToStation: isToStation,
-        size: 40, // Much smaller size
       );
       
       final marker = Marker(

@@ -60,8 +60,12 @@ class RouteService {
   }
 
   String _getLineForStation(String stationId) {
-    final station = MetroData.stations.firstWhere((s) => s.id == stationId);
-    final line = MetroData.lines.firstWhere((l) => station.lines.contains(l.id));
-    return line.name;
+    try {
+      final station = MetroData.stations.firstWhere((s) => s.id == stationId);
+      final line = MetroData.lines.firstWhere((l) => station.lines.contains(l.id));
+      return line.name;
+    } catch (e) {
+      return 'Metro Line'; // Fallback if station not found
+    }
   }
 }

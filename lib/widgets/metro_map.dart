@@ -46,8 +46,15 @@ class _MetroMapState extends State<MetroMap> {
   void _createPolylines() {
     _polylines = MetroData.lines.map((line) {
       final points = line.stations
-          .map((stationId) => MetroData.stations.firstWhere((s) => s.id == stationId))
-          .map((station) => LatLng(station.latitude, station.longitude))
+          .map((stationId) {
+            try {
+              return MetroData.stations.firstWhere((s) => s.id == stationId);
+            } catch (e) {
+              return null; // Station not found
+            }
+          })
+          .where((station) => station != null)
+          .map((station) => LatLng(station!.latitude, station.longitude))
           .toList();
 
       return Polyline(

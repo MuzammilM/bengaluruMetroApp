@@ -82,51 +82,7 @@ class _MetroMapState extends State<MetroMap> {
     }).toSet();
   }
 
-  void _createMarkers() {
-    _markers = MetroData.stations.map((station) {
-      // Get the primary line color for the marker
-      final primaryLine = station.lines.first;
-      final lineColor = MetroData.lines.firstWhere((l) => l.id == primaryLine);
-      
-      // Convert Flutter color to Google Maps marker hue
-      double markerHue;
-      String lineInfo;
-      
-      if (station.isInterchange) {
-        markerHue = BitmapDescriptor.hueOrange;
-        lineInfo = 'Interchange: ${station.lines.map((lineId) => MetroData.lines.firstWhere((l) => l.id == lineId).name).join(', ')}';
-      } else {
-        switch (primaryLine) {
-          case 'green':
-            markerHue = BitmapDescriptor.hueGreen;
-            lineInfo = 'Green Line';
-            break;
-          case 'purple':
-            markerHue = BitmapDescriptor.hueViolet;
-            lineInfo = 'Purple Line';
-            break;
-          case 'yellow':
-            markerHue = BitmapDescriptor.hueYellow;
-            lineInfo = 'Yellow Line';
-            break;
-          default:
-            markerHue = BitmapDescriptor.hueBlue;
-            lineInfo = 'Metro Line';
-        }
-      }
 
-      return Marker(
-        markerId: MarkerId(station.id),
-        position: LatLng(station.latitude, station.longitude),
-        infoWindow: InfoWindow(
-          title: station.name,
-          snippet: lineInfo,
-        ),
-        icon: BitmapDescriptor.defaultMarkerWithHue(markerHue),
-        onTap: () => _onMarkerTapped(station),
-      );
-    }).toSet();
-  }
 
   void _onMarkerTapped(MetroStation station) {
     final provider = Provider.of<MetroProvider>(context, listen: false);
@@ -259,7 +215,7 @@ class _MetroMapState extends State<MetroMap> {
                     borderRadius: BorderRadius.circular(8),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.2),
+                        color: Colors.black.withValues(alpha: 0.2),
                         blurRadius: 4,
                         offset: const Offset(0, 2),
                       ),

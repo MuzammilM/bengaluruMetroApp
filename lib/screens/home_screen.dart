@@ -96,6 +96,23 @@ class HomeScreen extends StatelessWidget {
                                 style: TextStyle(fontSize: 16)),
                       ),
 
+                      const SizedBox(height: 12),
+                      
+                      // Clear Selection button
+                      if (provider.fromStation != null || provider.toStation != null)
+                        OutlinedButton(
+                          onPressed: () {
+                            provider.setFromStation(null);
+                            provider.setToStation(null);
+                          },
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: Colors.red,
+                            side: const BorderSide(color: Colors.red),
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                          ),
+                          child: const Text('Clear Selection', style: TextStyle(fontSize: 16)),
+                        ),
+
                       const SizedBox(height: 24),
 
                       // Route display

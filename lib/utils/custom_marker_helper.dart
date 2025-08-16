@@ -72,7 +72,7 @@ class CustomMarkerHelper {
     final ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
     final Uint8List uint8List = byteData!.buffer.asUint8List();
     
-    return BitmapDescriptor.fromBytes(uint8List);
+    return BitmapDescriptor.bytes(uint8List);
   }
 
   static Future<BitmapDescriptor> createStationMarker(

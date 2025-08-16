@@ -19,6 +19,8 @@ class HomeScreen extends StatelessWidget {
         actions: [
           Consumer<AuthProvider>(
             builder: (context, authProvider, child) {
+              final userEmail = authProvider.user?.email ?? 'User';
+              
               return PopupMenuButton<String>(
                 icon: const Icon(Icons.account_circle),
                 onSelected: (value) {
@@ -30,7 +32,7 @@ class HomeScreen extends StatelessWidget {
                   PopupMenuItem(
                     enabled: false,
                     child: Text(
-                      authProvider.user?.email ?? 'User',
+                      userEmail,
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),

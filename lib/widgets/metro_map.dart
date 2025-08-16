@@ -175,36 +175,47 @@ class _MetroMapState extends State<MetroMap> {
 
   Widget _buildLineToggle(String label, String lineId, Color color) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 1),
+      padding: const EdgeInsets.symmetric(vertical: 2),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Checkbox(
-            value: _lineVisibility[lineId],
-            onChanged: (bool? value) {
-              setState(() {
-                _lineVisibility[lineId] = value ?? false;
-                _createPolylines(); // Recreate polylines
-                // Recreate markers
-                final provider = Provider.of<MetroProvider>(context, listen: false);
-                _updateMarkers(provider);
-              });
-            },
-            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            visualDensity: VisualDensity.compact,
+          SizedBox(
+            width: 20,
+            height: 20,
+            child: Checkbox(
+              value: _lineVisibility[lineId],
+              onChanged: (bool? value) {
+                setState(() {
+                  _lineVisibility[lineId] = value ?? false;
+                  _createPolylines(); // Recreate polylines
+                  // Recreate markers
+                  final provider = Provider.of<MetroProvider>(context, listen: false);
+                  _updateMarkers(provider);
+                });
+              },
+              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              visualDensity: VisualDensity.compact,
+              activeColor: color,
+            ),
           ),
+          const SizedBox(width: 6),
           Container(
-            width: 12,
-            height: 12,
+            width: 14,
+            height: 14,
             decoration: BoxDecoration(
               color: color,
               shape: BoxShape.circle,
+              border: Border.all(color: Colors.white, width: 1),
             ),
           ),
-          const SizedBox(width: 4),
+          const SizedBox(width: 6),
           Text(
             label,
-            style: const TextStyle(fontSize: 11),
+            style: const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              color: Colors.black87,
+            ),
           ),
         ],
       ),
@@ -248,42 +259,7 @@ class _MetroMapState extends State<MetroMap> {
           ),
           child: Stack(
             children: [
-              // Line toggles at the top
-              Positioned(
-                top: 10,
-                left: 10,
-                child: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(8),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.2),
-                        blurRadius: 4,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Text(
-                        'Show Lines',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 12,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      _buildLineToggle('Green', 'green', Colors.green),
-                      _buildLineToggle('Purple', 'purple', Colors.purple),
-                      _buildLineToggle('Yellow', 'yellow', Colors.yellow[700]!),
-                    ],
-                  ),
-                ),
-              ),
+              // GoogleMap as base layer
               GoogleMap(
                 initialCameraPosition: _initialPosition,
                 markers: _markers,
@@ -299,6 +275,45 @@ class _MetroMapState extends State<MetroMap> {
                 compassEnabled: false,
                 mapToolbarEnabled: false,
               ),
+              
+              // Line filter overlay - top left
+              Positioned(
+                top: 10,
+                left: 10,
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.3),
+                        blurRadius: 6,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text(
+                        'Show Lines',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      _buildLineToggle('Green', 'green', Colors.green),
+                      _buildLineToggle('Purple', 'purple', Colors.purple),
+                      _buildLineToggle('Yellow', 'yellow', Colors.yellow[700]!),
+                    ],
+                  ),
+                ),
+              ),
+              
               // Legend overlay
               Positioned(
                 top: 10,

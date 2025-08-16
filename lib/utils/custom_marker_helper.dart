@@ -6,6 +6,39 @@ import '../models/metro_station.dart';
 import '../data/metro_data.dart';
 
 class CustomMarkerHelper {
+  // Cache for storing created markers
+  static final Map<String, BitmapDescriptor> _markerCache = {};
+  
+  // Pre-created standard markers
+  static BitmapDescriptor? _greenMarker;
+  static BitmapDescriptor? _purpleMarker;
+  static BitmapDescriptor? _yellowMarker;
+  static BitmapDescriptor? _orangeMarker;
+  static BitmapDescriptor? _redMarker;
+  static BitmapDescriptor? _blueMarker;
+  
+  // Initialize standard markers
+  static Future<void> initializeStandardMarkers() async {
+    if (_greenMarker != null) return; // Already initialized
+    
+    _greenMarker = await _createSimpleMarker(Colors.green, 'G');
+    _purpleMarker = await _createSimpleMarker(Colors.purple, 'P');
+    _yellowMarker = await _createSimpleMarker(Colors.yellow[700]!, 'Y');
+    _orangeMarker = await _createSimpleMarker(Colors.orange, 'INT');
+    _redMarker = await _createSimpleMarker(Colors.red, 'FROM');
+    _blueMarker = await _createSimpleMarker(Colors.blue, 'TO');
+  }
+  
+  static Future<BitmapDescriptor> _createSimpleMarker(Color color, String text) async {
+    return createCustomMarker(
+      text: text,
+      backgroundColor: color,
+      textColor: Colors.white,
+      size: 40,
+      isSelected: false,
+    );
+  }
+  
   static Future<BitmapDescriptor> createCustomMarker({
     required String text,
     required Color backgroundColor,
@@ -79,21 +112,23 @@ class CustomMarkerHelper {
     MetroStation station, {
     bool isFromStation = false,
     bool isToStation = false,
-    double size = 40,
   }) async {
-    Color backgroundColor;
-    String text;
-    bool isSelected = isFromStation || isToStation;
+    // Ensure standard markers are initialized
+    await initializeStandardMarkers();
     
+    // Use pre-created markers for better performance
     if (isFromStation) {
-      backgroundColor = Colors.red;
-      text = 'FROM';
+      return _redMarker!;
     } else if (isToStation) {
-      backgroundColor = Colors.blue;
-      text = 'TO';
+      return _blueMarker!;
     } else if (station.isInterchange) {
-      backgroundColor = Colors.orange;
-      // Show all line initials for interchange
+      // For interchange stations, check cache first
+      final cacheKey = 'interchange_${station.lines.join('_')}';
+      if (_markerCache.containsKey(cacheKey)) {
+        return _markerCache[cacheKey]!;
+      }
+      
+      // Create custom interchange marker
       final lineInitials = station.lines.map((lineId) {
         switch (lineId) {
           case 'green': return 'G';
@@ -102,34 +137,35 @@ class CustomMarkerHelper {
           default: return 'M';
         }
       }).join('');
-      text = lineInitials;
-    } else {
-      // Single line station
-      final primaryLine = station.lines.first;
-      final line = MetroData.lines.firstWhere((l) => l.id == primaryLine);
-      backgroundColor = line.color;
       
+      final marker = await createCustomMarker(
+        text: lineInitials,
+        backgroundColor: Colors.orange,
+        textColor: Colors.white,
+        size: 40,
+        isSelected: false,
+      );
+      
+      _markerCache[cacheKey] = marker;
+      return marker;
+    } else {
+      // Single line station - use pre-created markers
+      final primaryLine = station.lines.first;
       switch (primaryLine) {
         case 'green':
-          text = 'G';
-          break;
+          return _greenMarker!;
         case 'purple':
-          text = 'P';
-          break;
+          return _purpleMarker!;
         case 'yellow':
-          text = 'Y';
-          break;
+          return _yellowMarker!;
         default:
-          text = 'M';
+          return _greenMarker!; // Fallback
       }
     }
-    
-    return createCustomMarker(
-      text: text,
-      backgroundColor: backgroundColor,
-      textColor: Colors.white,
-      isSelected: isSelected,
-      size: size,
-    );
+  }
+  
+  // Clear cache when needed
+  static void clearCache() {
+    _markerCache.clear();
   }
 }

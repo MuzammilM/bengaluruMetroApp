@@ -12,7 +12,7 @@ class OfflineAuthProvider extends ChangeNotifier {
   bool get isLoading => false;
   String? get errorMessage => null;
   dynamic get user => {'email': 'offline@user.com'};
-  
+
   Future<void> signOut() async {
     // No-op in offline mode
   }
@@ -20,7 +20,7 @@ class OfflineAuthProvider extends ChangeNotifier {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   bool supabaseInitialized = false;
   try {
     await SupabaseService.initialize();
@@ -30,13 +30,13 @@ void main() async {
     print('Supabase initialization failed: $e');
     print('App will run in offline mode');
   }
-  
+
   runApp(BangaloreMetroApp(supabaseEnabled: supabaseInitialized));
 }
 
 class BangaloreMetroApp extends StatelessWidget {
   final bool supabaseEnabled;
-  
+
   const BangaloreMetroApp({super.key, required this.supabaseEnabled});
 
   @override
@@ -55,17 +55,17 @@ class BangaloreMetroApp extends StatelessWidget {
           primarySwatch: Colors.green,
           useMaterial3: true,
         ),
-        home: supabaseEnabled 
-          ? Consumer<AuthProvider>(
-              builder: (context, authProvider, child) {
-                if (authProvider.isAuthenticated) {
-                  return const HomeScreen();
-                } else {
-                  return const AuthScreen();
-                }
-              },
-            )
-          : const HomeScreen(), // Skip auth if Supabase is not available
+        home: supabaseEnabled
+            ? Consumer<AuthProvider>(
+                builder: (context, authProvider, child) {
+                  if (authProvider.isAuthenticated) {
+                    return const HomeScreen();
+                  } else {
+                    return const AuthScreen();
+                  }
+                },
+              )
+            : const HomeScreen(), // Skip auth if Supabase is not available
         debugShowCheckedModeBanner: false,
       ),
     );

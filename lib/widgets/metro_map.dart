@@ -33,6 +33,14 @@ class _MetroMapState extends State<MetroMap> {
   void initState() {
     super.initState();
     _createPolylines();
+    // Initialize standard markers for better performance
+    _initializeMarkers();
+  }
+  
+  Future<void> _initializeMarkers() async {
+    // Pre-initialize standard markers
+    await CustomMarkerHelper.initializeStandardMarkers();
+    
     // Initialize markers with empty provider state
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final provider = Provider.of<MetroProvider>(context, listen: false);
@@ -41,59 +49,69 @@ class _MetroMapState extends State<MetroMap> {
   }
 
   Future<void> _updateMarkers(MetroProvider provider) async {
-    
     final List<Marker> markers = [];
     
-    for (final station in MetroData.stations) {
-      // Check if any of the station's lines are visible
+    // Filter visible stations first to reduce processing
+    final visibleStations = MetroData.stations.where((station) {
       bool isVisible = station.lines.any((lineId) => _lineVisibility[lineId] == true);
-      
-      // Always show selected stations regardless of line visibility
       bool isFromStation = provider.fromStation?.id == station.id;
       bool isToStation = provider.toStation?.id == station.id;
-      
-      if (!isVisible && !isFromStation && !isToStation) {
-        continue; // Skip this station if its lines are hidden
-      }
-      
-      // Create line info for tooltip
-      String lineInfo;
-      if (isFromStation) {
-        lineInfo = 'FROM: ${station.lines.map((lineId) => MetroData.lines.firstWhere((l) => l.id == lineId).name).join(', ')}';
-      } else if (isToStation) {
-        lineInfo = 'TO: ${station.lines.map((lineId) => MetroData.lines.firstWhere((l) => l.id == lineId).name).join(', ')}';
-      } else if (station.isInterchange) {
-        lineInfo = 'Interchange: ${station.lines.map((lineId) => MetroData.lines.firstWhere((l) => l.id == lineId).name).join(', ')}';
-      } else {
-        final primaryLine = station.lines.first;
-        final line = MetroData.lines.firstWhere((l) => l.id == primaryLine);
-        lineInfo = '${line.name}';
-      }
-      
-      // Create custom marker
-      final customIcon = await CustomMarkerHelper.createStationMarker(
-        station,
-        isFromStation: isFromStation,
-        isToStation: isToStation,
+      return isVisible || isFromStation || isToStation;
+    }).toList();
+    
+    // Process stations in parallel batches for better performance
+    const batchSize = 15;
+    for (int i = 0; i < visibleStations.length; i += batchSize) {
+      final batch = visibleStations.skip(i).take(batchSize);
+      final batchMarkers = await Future.wait(
+        batch.map((station) => _createMarkerForStation(station, provider)),
       );
+      markers.addAll(batchMarkers);
       
-      final marker = Marker(
-        markerId: MarkerId(station.id),
-        position: LatLng(station.latitude, station.longitude),
-        infoWindow: InfoWindow(
-          title: station.name,
-          snippet: lineInfo,
-        ),
-        icon: customIcon,
-        onTap: () => _onMarkerTapped(station),
-      );
-      
-      markers.add(marker);
+      // Update UI progressively for better perceived performance
+      if (i == 0 || (i + batchSize) >= visibleStations.length) {
+        setState(() {
+          _markers = markers.toSet();
+        });
+      }
+    }
+  }
+  
+  Future<Marker> _createMarkerForStation(MetroStation station, MetroProvider provider) async {
+    bool isFromStation = provider.fromStation?.id == station.id;
+    bool isToStation = provider.toStation?.id == station.id;
+    
+    // Create line info for tooltip
+    String lineInfo;
+    if (isFromStation) {
+      lineInfo = 'FROM: ${station.lines.map((lineId) => MetroData.lines.firstWhere((l) => l.id == lineId).name).join(', ')}';
+    } else if (isToStation) {
+      lineInfo = 'TO: ${station.lines.map((lineId) => MetroData.lines.firstWhere((l) => l.id == lineId).name).join(', ')}';
+    } else if (station.isInterchange) {
+      lineInfo = 'Interchange: ${station.lines.map((lineId) => MetroData.lines.firstWhere((l) => l.id == lineId).name).join(', ')}';
+    } else {
+      final primaryLine = station.lines.first;
+      final line = MetroData.lines.firstWhere((l) => l.id == primaryLine);
+      lineInfo = '${line.name}';
     }
     
-    setState(() {
-      _markers = markers.toSet();
-    });
+    // Get cached marker (much faster than creating new ones)
+    final customIcon = await CustomMarkerHelper.createStationMarker(
+      station,
+      isFromStation: isFromStation,
+      isToStation: isToStation,
+    );
+    
+    return Marker(
+      markerId: MarkerId(station.id),
+      position: LatLng(station.latitude, station.longitude),
+      infoWindow: InfoWindow(
+        title: station.name,
+        snippet: lineInfo,
+      ),
+      icon: customIcon,
+      onTap: () => _onMarkerTapped(station),
+    );
   }
 
 

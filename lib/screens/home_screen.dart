@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/metro_provider.dart';
+import '../providers/auth_provider.dart';
 import '../widgets/station_selector.dart';
 import '../widgets/route_display.dart';
 import '../widgets/metro_map.dart';
@@ -15,6 +16,40 @@ class HomeScreen extends StatelessWidget {
         title: const Text('Bangalore Metro Journey Planner'),
         backgroundColor: Colors.green,
         foregroundColor: Colors.white,
+        actions: [
+          Consumer<AuthProvider>(
+            builder: (context, authProvider, child) {
+              return PopupMenuButton<String>(
+                icon: const Icon(Icons.account_circle),
+                onSelected: (value) {
+                  if (value == 'logout') {
+                    authProvider.signOut();
+                  }
+                },
+                itemBuilder: (context) => [
+                  PopupMenuItem(
+                    enabled: false,
+                    child: Text(
+                      authProvider.user?.email ?? 'User',
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  const PopupMenuDivider(),
+                  const PopupMenuItem(
+                    value: 'logout',
+                    child: Row(
+                      children: [
+                        Icon(Icons.logout),
+                        SizedBox(width: 8),
+                        Text('Sign Out'),
+                      ],
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+        ],
       ),
       body: Consumer<MetroProvider>(
         builder: (context, provider, child) {

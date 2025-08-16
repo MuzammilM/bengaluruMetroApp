@@ -41,8 +41,6 @@ class _MetroMapState extends State<MetroMap> {
   }
 
   Future<void> _updateMarkers(MetroProvider provider) async {
-    print('Updating markers for ${MetroData.stations.length} stations');
-    print('Provider state - From: ${provider.fromStation?.name}, To: ${provider.toStation?.name}');
     
     final List<Marker> markers = [];
     
@@ -91,14 +89,11 @@ class _MetroMapState extends State<MetroMap> {
       );
       
       markers.add(marker);
-      print('Created custom marker for ${station.name}');
     }
     
     setState(() {
       _markers = markers.toSet();
     });
-    
-    print('Total custom markers created: ${_markers.length}');
   }
 
 
@@ -265,9 +260,7 @@ class _MetroMapState extends State<MetroMap> {
                 markers: _markers,
                 polylines: _polylines,
                 onMapCreated: (GoogleMapController controller) {
-                  print('Google Map created successfully!');
-                  print('Markers on map: ${_markers.length}');
-                  print('Polylines on map: ${_polylines.length}');
+                  // Map initialized
                 },
                 mapType: MapType.normal,
                 zoomControlsEnabled: true,
